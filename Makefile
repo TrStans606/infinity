@@ -71,12 +71,15 @@ $(BUILD_FOLDER)/%.o: $(SOURCE_FILES) $(HEADER_FILES)
 
 ##################################################
 
-library: $(OBJECT_FILES)
+library: $(RELEASE_FOLDER)/$(PROJECT_NAME).so
 	mkdir -p $(RELEASE_FOLDER)
-	ar rvs $(RELEASE_FOLDER)/$(PROJECT_NAME).a $(OBJECT_FILES)
 	rm -rf $(RELEASE_FOLDER)/$(INCLUDE_FOLDER)
 	cp --parents $(HEADER_FILES) $(RELEASE_FOLDER)
 	mv $(RELEASE_FOLDER)/$(SOURCE_FOLDER)/ $(RELEASE_FOLDER)/$(INCLUDE_FOLDER)
+
+$(RELEASE_FOLDER)/$(PROJECT_NAME).so: $(OBJECT_FILES)
+	mkdir -p $(RELEASE_FOLDER)
+	$(CC) $(LD_FLAGS_LIB) -o $@ $(OBJECT_FILES) $(LIB_DEPS)
 
 ##################################################
 
