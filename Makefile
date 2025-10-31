@@ -3,6 +3,7 @@
 # (c) 2018 Claude Barthels, ETH Zurich
 #
 # Call 'make library' to build the library
+# Call 'make library-shared'to build dynamic library
 # Call 'make examples' to build the examples
 # Call 'make all' to build everything
 #
@@ -60,7 +61,7 @@ BUILD_DIRECTORIES	= $(patsubst $(SOURCE_FOLDER)/%,$(BUILD_FOLDER)/%,$(SOURCE_DIR
 
 ##################################################
 
-all: library examples
+all: library examples library-shared
 
 ##################################################
 
@@ -68,10 +69,18 @@ $(BUILD_FOLDER)/%.o: $(SOURCE_FILES) $(HEADER_FILES)
 	mkdir -p $(BUILD_FOLDER)
 	mkdir -p $(BUILD_DIRECTORIES)
 	$(CC) $(CC_FLAGS) -c $(SOURCE_FOLDER)/$*.cpp -I $(SOURCE_FOLDER) -o $(BUILD_FOLDER)/$*.o
+##################################################
+
+library: $(OBJECT_FILES)
+	mkdir -p $(RELEASE_FOLDER)
+	ar rvs $(RELEASE_FOLDER)/$(PROJECT_NAME).a $(OBJECT_FILES)
+	rm -rf $(RELEASE_FOLDER)/$(INCLUDE_FOLDER)
+	cp --parents $(HEADER_FILES) $(RELEASE_FOLDER)
+	mv $(RELEASE_FOLDER)/$(SOURCE_FOLDER)/ $(RELEASE_FOLDER)/$(INCLUDE_FOLDER)
 
 ##################################################
 
-library: $(RELEASE_FOLDER)/$(PROJECT_NAME).so
+library-shared: $(RELEASE_FOLDER)/$(PROJECT_NAME).so
 	mkdir -p $(RELEASE_FOLDER)
 	rm -rf $(RELEASE_FOLDER)/$(INCLUDE_FOLDER)
 	cp --parents $(HEADER_FILES) $(RELEASE_FOLDER)
